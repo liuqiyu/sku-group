@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        button.active {
+            outline: none;
+            border-color: red;
+            background-color: red;
+            color: #fff;
+        }
+    </style>
+</head>
+<body>
+<h1>sku组合方式1：</h1>
+<div id="wrapper"></div>
+<hr/>
+<p>数据格式如下：</p>
+<img src="image.png" alt="">
+<script src="main.js"></script>
+<script>
+    var sku = [
+        { color: '红', size: '大', model: 'A', number: '100', id: 1 },
+        { color: '红', size: '小', model: 'A', number: '400', id: 2 },
+        { color: '红', size: '大', model: 'C', number: '400', id: 2 },
+        { color: '黑', size: '中', model: 'B', number: '200', id: 3 },
+        { color: '蓝', size: '小', model: 'C', number: '300', id: 4 },
+        { color: '蓝', size: '大', model: 'A', number: '300', id: 5 },
+    ];
+    console.log(sku);
+    var chooseColor;
+    var chooseSize;
+    var chooseModel;
+
+    function getArr(arr, select) {
+        if (arguments.length != 2) {
+            return false;
+        }
+        var newArr = [];
+        arr.forEach(function(value) {
+            newArr.push(value[select]);
+        });
+        return [...new Set(newArr)].sort();
+    }
+    var colorArr = getArr(sku, 'color');
+    var sizeArr = getArr(sku, 'size');
+    var modelArr = getArr(sku, 'model');
+
+    var wrapper = document.getElementById('wrapper');
+    if (colorArr.length > 0) {
+        var colorWrapper = document.createElement('div');
+        colorWrapper.id = 'colorWrapper';
+        colorArr.forEach(function(value) {
+            var btn = document.createElement('button');
+            btn.className = 'colorBtn';
+            btn.innerHTML = value;
+            colorWrapper.appendChild(btn);
+        });
+        wrapper.appendChild(colorWrapper);
+        colorWrapper.addEventListener('click', function(e) {
+            var colorBtn = document.querySelectorAll('.colorBtn');
+            for (var i = 0; i < colorBtn.length; i ++) {
+                colorBtn[i].classList.remove('active');
+                if (colorBtn[i] === e.target) {
+                    colorBtn[i].classList.add('active');
+                    chooseColor = e.target.innerHTML;
+                    var skuArr = func(sku, 'color', e.target.innerHTML);
+                    var arrr = [];
+                    if (chooseSize && !chooseModel) {
+                        skuArr.forEach(function(value) {
+                            if (value.size == chooseSize) {
+                                arrr.push(value);
+                            }
+                        });
+                    } else if (!chooseSize && chooseModel) {
+                        skuArr.forEach(function(value) {
+                            if (value.model == chooseModel) {
+                                arrr.push(value);
+                            }
+                        });
+                    } else if(chooseSize && chooseModel) {
+                        skuArr.forEach(function(value) {
+                            if (value.model == chooseModel && value.size == chooseSize) {
+                                arrr.push(value);
+                            }
+                        });
+                    } else {
+                        arrr = skuArr;
+                    }
+                    var sizeBtn = document.querySelectorAll('.sizeBtn');
+                    var modelBtn = document.querySelectorAll('.modelBtn');
+                    var sizeArr1 = [];
+                    var modelArr1 = [];
+                    arrr.forEach(function(value){
+                        sizeArr1.push(value.size);
+                        modelArr1.push(value.model);
+                    });
+                    for (var j = 0; j < sizeBtn.length; j ++) {
+                        if (sizeArr1.indexOf(sizeBtn[j].innerHTML) < 0) {
+                            sizeBtn[j].disabled = true;
+                        }
+                    }
+                    for (var j = 0; j < modelBtn.length; j ++) {
+                        if (modelArr1.indexOf(modelBtn[j].innerHTML) < 0) {
+                            modelBtn[j].disabled = true;
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    if (sizeArr.length > 0) {
+        var sizeWrapper = document.createElement('div');
+        sizeWrapper.id = 'sizeWrapper';
+        sizeArr.forEach(function(value) {
+            var btn = document.createElement('button');
+            btn.className = 'sizeBtn';
+            btn.innerHTML = value;
+            sizeWrapper.appendChild(btn);
+        });
+        wrapper.appendChild(sizeWrapper);
+        sizeWrapper.addEventListener('click', function(e) {
+            var sizeBtn = document.querySelectorAll('.sizeBtn');
+            for (var i = 0; i < sizeBtn.length; i ++) {
+                sizeBtn[i].classList.remove('active');
+                if (sizeBtn[i] === e.target) {
+                    sizeBtn[i].classList.add('active');
+                    chooseSize = e.target.innerHTML;
+                    var skuArr = func(sku, 'size', e.target.innerHTML);
+                    var arrr = [];
+                    if (chooseColor && !chooseModel) {
+                        skuArr.forEach(function(value) {
+                            if (value.color == chooseColor) {
+                                arrr.push(value);
+                            }
+                        });
+                    } else if (!chooseColor && chooseModel) {
+                        skuArr.forEach(function(value) {
+                            if (value.model == chooseModel) {
+                                arrr.push(value);
+                            }
+                        });
+                    } else if(chooseColor && chooseModel) {
+                        skuArr.forEach(function(value) {
+                            if (value.model == chooseModel && value.color == chooseColor) {
+                                arrr.push(value);
+                            }
+                        });
+                    } else {
+                        arrr = skuArr;
+                    }
+                    var colorBtn = document.querySelectorAll('.colorBtn');
+                    var modelBtn = document.querySelectorAll('.modelBtn');
+                    var colorArr1 = [];
+                    var modelArr1 = [];
+                    arrr.forEach(function(value){
+                        colorArr1.push(value.color);
+                        modelArr1.push(value.model);
+                    });
+                    for (var j = 0; j < colorBtn.length; j ++) {
+                        if (colorArr1.indexOf(colorBtn[j].innerHTML) < 0) {
+                            colorBtn[j].disabled = true;
+                        }
+                    }
+                    for (var j = 0; j < modelBtn.length; j ++) {
+                        if (modelArr1.indexOf(modelBtn[j].innerHTML) < 0) {
+                            modelBtn[j].disabled = true;
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    if (modelArr.length > 0) {
+        var modelWrapper = document.createElement('div');
+        modelWrapper.id = 'modelWrapper';
+        modelArr.forEach(function(value) {
+            var btn = document.createElement('button');
+            btn.className = 'modelBtn';
+            btn.innerHTML = value;
+            modelWrapper.appendChild(btn);
+        });
+        wrapper.appendChild(modelWrapper);
+        modelWrapper.addEventListener('click', function(e) {
+            var modelBtn = document.querySelectorAll('.modelBtn');
+            for (var i = 0; i < modelBtn.length; i ++) {
+                modelBtn[i].classList.remove('active');
+                if (modelBtn[i] === e.target) {
+                    modelBtn[i].classList.add('active');
+                    chooseModel = e.target.innerHTML;
+                    var skuArr = func(sku, 'model', e.target.innerHTML);
+                    var arrr = [];
+                    if (chooseColor && !chooseSize) {
+                        skuArr.forEach(function(value) {
+                            if (value.color == chooseColor) {
+                                arrr.push(value);
+                            }
+                        });
+                    } else if (!chooseColor && chooseSize) {
+                        skuArr.forEach(function(value) {
+                            if (value.size == chooseSize) {
+                                arrr.push(value);
+                            }
+                        });
+                    } else if(chooseColor && chooseSize) {
+                        skuArr.forEach(function(value) {
+                            if (value.color == chooseSize && value.size == chooseSize) {
+                                arrr.push(value);
+                            }
+                        });
+                    } else {
+                        arrr = skuArr;
+                    }
+                    var colorBtn = document.querySelectorAll('.colorBtn');
+                    var sizeBtn = document.querySelectorAll('.sizeBtn');
+                    var colorArr1 = [];
+                    var sizeArr1 = [];
+                    skuArr.forEach(function(value){
+                        colorArr1.push(value.color);
+                        sizeArr1.push(value.size);
+                    });
+                    for (var j = 0; j < colorBtn.length; j ++) {
+                        if (colorArr1.indexOf(colorBtn[j].innerHTML) < 0) {
+                            colorBtn[j].disabled = true;
+                        }
+                    }
+                    for (var j = 0; j < sizeBtn.length; j ++) {
+                        if (sizeArr1.indexOf(sizeBtn[j].innerHTML) < 0) {
+                            sizeBtn[j].disabled = true;
+                        }
+                    }
+                }
+            }
+        });
+    }
+</script>
+</body>
+</html>
